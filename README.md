@@ -5,7 +5,9 @@ This allows you to do things like swap from low quality rendering settings to hi
 
 Works with [stable-diffusion-webui-forge](https://github.com/lllyasviel/stable-diffusion-webui-forge). Untested with [SD.Next](https://github.com/vladmandic/automatic).
 
-## Updating from A1111 1.8.0 to 1.9.0
+## Updating from A1111 1.8 to 1.9 (not 1.10)
+Note: A1111 1.10 fixes this backwards compatibility issue described below, so it's only relevant if you are using 1.9.
+
 A1111 1.9.0 added a new "Schedule type" dropdown next to the "Sampling method" dropdown which splits off the scheduler from the sampler. This means that all of your config presets that have a saved sampler needs to be renamed/fixed to remove the scheduler text at the end. For example, if you have `txt2img_sampling` set to "DPM++ 2M Karras", it now needs to be set to "DPM++ 2M" with the new `txt2img_scheduler` dropdown set to "Karras". You can do this by manually editing your `config-txt2img.txt` and `config-img2img.txt` files at `/extensions/Config-Presets`, or by deleting the bad presets in the web UI and remaking them.
 
 If you get a `AssertionError: bad sampler name` this is why. You need to fix your sampler names to match the new naming convention in A1111 1.9.0.
