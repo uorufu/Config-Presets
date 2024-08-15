@@ -44,6 +44,9 @@ Screenshot of config-txt2img.json, which can be opened with the open config file
 <details>
     <summary>Click to view Changelog</summary>
     
+#### 8/15/2024
+* Support for Forge's Distilled CFG (txt2img_distilled_cfg_scale) for Flux models
+* Added new presets for Flux Dev/Schnell, tweaked existing presets
 #### 4/14/2024
 * Fixed backwards compatibility issue introduced in yesterdays update.
 #### 4/13/2024
