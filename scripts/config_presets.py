@@ -564,11 +564,11 @@ def load_txt2img_config_file():
 
         txt2img_config_presets = {
             "None": {},
-            "SD 1.5 - 512x512": {
+            "SD1.5 - 512x512": {
                 "txt2img_width": 512,
                 "txt2img_height": 512,
             },
-            "SD 2.1 - 768x768": {
+            "SD2.1 - 768x768": {
                 "txt2img_width": 768,
                 "txt2img_height": 768,
             },
@@ -581,36 +581,54 @@ def load_txt2img_config_file():
                 "txt2img_height": 1024,
                 "txt2img_enable-checkbox": True,
             },
-            "Low quality ------ steps: 10, batch size: 8, DPM++ 2M": {
+            "Flux.1 Dev - 256x256 to 1920x1080 (0.1 to 2.0 megapixels), 20 steps, CFG 1, Distilled CFG 3.5, Euler Simple": {
+                "txt2img_width": 1024,
+                "txt2img_height": 1024,
+                "txt2img_sampling": "Euler",
+                "txt2img_scheduler": "Simple",
+                "txt2img_distilled_cfg_scale": 3.5,
+                "txt2img_cfg_scale": 1,
+                "txt2img_steps": 20,
+            },
+            "Flux.1 Schnell - 256x256 to 1920x1080 (0.1 to 2.0 megapixels), 4 steps, CFG 1, Distilled CFG 3.5, Euler Simple": {
+                "txt2img_width": 1024,
+                "txt2img_height": 1024,
+                "txt2img_sampling": "Euler",
+                "txt2img_scheduler": "Simple",
+                "txt2img_distilled_cfg_scale": 3.5,
+                "txt2img_cfg_scale": 1,
+                "txt2img_steps": 4,
+            },
+            "High res ----------- [Hires fix - Upscale by: 2, Denoising: 0.3, Hires steps: 10]": {
+                "txt2img_enable_hr": True,
+                "txt2img_hr_scale": 2,
+                "txt2img_hires_steps": 10,
+                "txt2img_denoising_strength": 0.3,
+                "txt2img_batch_count": 1,
+                "txt2img_batch_size": 1,
+            },
+            "SD1.5 Low quality ------ steps: 10, batch size: 4, DPM++ 2M": {
                 "txt2img_sampling": "DPM++ 2M",
                 "txt2img_steps": 10,
                 "txt2img_enable_hr": False,
                 "txt2img_batch_count": 1,
-                "txt2img_batch_size": 8,
+                "txt2img_batch_size": 4,
             },
-            "Medium quality - steps: 15, batch size: 4, DPM++ 2M": {
+            "SD1.5 Medium quality - steps: 15, batch size: 4, DPM++ 2M": {
                 "txt2img_sampling": "DPM++ 2M",
                 "txt2img_steps": 15,
                 "txt2img_enable_hr": False,
                 "txt2img_batch_count": 1,
                 "txt2img_batch_size": 4,
             },
-            "High quality ------ steps: 30, batch size: 4, DPM++ 2S a": {
+            "SD1.5 High quality ------ steps: 30, batch size: 4, DPM++ 2S a": {
                 "txt2img_sampling": "DPM++ 2S a",
                 "txt2img_steps": 30,
                 "txt2img_enable_hr": False,
                 "txt2img_batch_count": 1,
                 "txt2img_batch_size": 4,
             },
-            "High res ----------- [Hires fix - Upscale by: 2, Denoising: 0.4, Hires steps: 10]": {
-                "txt2img_enable_hr": True,
-                "txt2img_hr_scale": 2,
-                "txt2img_hires_steps": 10,
-                "txt2img_denoising_strength": 0.4,
-                "txt2img_batch_count": 1,
-                "txt2img_batch_size": 1,
-            },
-            "SD 1.5 - 1080p --- 432x768 -> 1920x1080, [Hires fix - Upscale by: 2.5, Denoising: 0.4, Hires steps: 10]": {
+            "SD1.5 - 1080p --- 432x768 -> 1920x1080, [Hires fix - Upscale by: 2.5, Denoising: 0.4, Hires steps: 10]": {
                 # 2x 960x536, 2.5x 768x432, 3x 640x360
                 "txt2img_width": 768,
                 "txt2img_height": 432,
@@ -621,7 +639,7 @@ def load_txt2img_config_file():
                 "txt2img_batch_count": 1,
                 "txt2img_batch_size": 1,
             },
-            "SD 1.5 - 1440p --- 432x768 -> 2560x1440, [Hires fix - Upscale by: 3.3334, Denoising: 0.35, Hires steps: 10]": {
+            "SD1.5 - 1440p --- 432x768 -> 2560x1440, [Hires fix - Upscale by: 3.3334, Denoising: 0.35, Hires steps: 10]": {
                 # 2x 1024x720, 2.5x 1024x576, 3.3334x 768x432, 4x 640x360
                 "txt2img_width": 768,
                 "txt2img_height": 432,
@@ -632,7 +650,7 @@ def load_txt2img_config_file():
                 "txt2img_batch_count": 1,
                 "txt2img_batch_size": 1,
             },
-            "SD 1.5 - 4k -------- 432x768 -> 3840x2160, [Upscale by: 5, Denoising: 0.3, Hires steps: 15]": {
+            "SD1.5 - 4k -------- 432x768 -> 3840x2160, [Upscale by: 5, Denoising: 0.3, Hires steps: 15]": {
                 # 2x 1420x1080, 2.5x 1536x864, 3x 1280x720, 5x 768x432, 6x 640x360
                 "txt2img_width": 768,
                 "txt2img_height": 432,
@@ -775,13 +793,18 @@ class Script(scripts.Script):
             "txt2img_enable-checkbox",  # added in A1111 1.6.0 (Refiner)
             "txt2img_switch_at",        # added in A1111 1.6.0 (Refiner switch at)
 
-            # IDs below are only in Vlad's SD.Next UI (they must also be added to self.txt2img_optional_ids):
+            # IDs below are only available in specific WebUIs (they must also be added to self.txt2img_optional_ids):
+
+            # vladmandic/automatic (SD.Next) https://github.com/vladmandic/automatic
             "txt2img_sampling_alt",     # Equiv to txt2img_hr_upscaler
             "txt2img_steps_alt",        # Equiv to txt2img_hires_steps
             "txt2img_show_batch",
             "txt2img_show_seed",
             "txt2img_show_advanced", 
             "txt2img_show_second_pass", # Replaces txt2img_enable_hr in Vlad's
+
+            # lllyasviel/stable-diffusion-webui-forge (Forge) https://github.com/lllyasviel/stable-diffusion-webui-forge
+            "txt2img_distilled_cfg_scale",  # Flux model's CFG
         ]
         self.txt2img_component_ids += txt2img_custom_tracked_components_ids # add the custom tracked components
 
@@ -799,12 +822,17 @@ class Script(scripts.Script):
             "img2img_enable-checkbox",  # added in A1111 1.6.0 (Refiner)
             "img2img_switch_at",        # added in A1111 1.6.0 (Refiner switch at)
 
-            # IDs below are only in Vlad's SD.Next UI (they must also be added to self.img2img_optional_ids):
+            # IDs below are only available in specific WebUIs (they must also be added to self.img2img_optional_ids):
+
+            # vladmandic/automatic (SD.Next) https://github.com/vladmandic/automatic
             "img2img_show_seed",
             "img2img_show_resize",
             "img2img_show_batch",
             "img2img_show_denoise",
             "img2img_show_advanced",
+
+            # lllyasviel/stable-diffusion-webui-forge (Forge) https://github.com/lllyasviel/stable-diffusion-webui-forge
+            "img2img_distilled_cfg_scale",  # Flux model's CFG
         ]
         self.img2img_component_ids += img2img_custom_tracked_components_ids # add the custom tracked components
 
@@ -821,13 +849,16 @@ class Script(scripts.Script):
 
             "txt2img_hires_steps",      # Replaced in Vlad's SD.Next
 
-            # IDs below are only in Vlad's SD.Next UI:
+            # vladmandic/automatic (SD.Next) https://github.com/vladmandic/automatic
             "txt2img_sampling_alt",
             "txt2img_steps_alt",
             "txt2img_show_batch",
             "txt2img_show_seed",
             "txt2img_show_advanced", 
             "txt2img_show_second_pass",
+
+            # lllyasviel/stable-diffusion-webui-forge (Forge) https://github.com/lllyasviel/stable-diffusion-webui-forge
+            "txt2img_distilled_cfg_scale",  # Flux model's CFG
 
             # IDs below are only for extensions:
             "controlnet_control_mod_radio",
@@ -839,12 +870,15 @@ class Script(scripts.Script):
             "img2img_switch_at",        # added in A1111 1.6.0 (Refiner Switch at)
             "img2img_scheduler",        # added in A1111 1.9.0 (Schedule type)
 
-            # IDs below are only in Vlad's SD.Next UI:
+            # vladmandic/automatic (SD.Next) https://github.com/vladmandic/automatic
             "img2img_show_seed",
             "img2img_show_resize",
             "img2img_show_batch",
             "img2img_show_denoise",
             "img2img_show_advanced",
+
+            # lllyasviel/stable-diffusion-webui-forge (Forge) https://github.com/lllyasviel/stable-diffusion-webui-forge
+            "img2img_distilled_cfg_scale",  # Flux model's CFG
 
             # IDs below are only for extensions:
             "controlnet_control_mod_radio",
