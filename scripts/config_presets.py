@@ -40,6 +40,7 @@ def load_txt2img_custom_tracked_component_ids() -> list[str]:
 #txt2img_prompt
 #txt2img_neg_prompt
 #txt2img_styles
+#txt2img_seed
 #txt2img_subseed_show
 #txt2img_subseed
 #txt2img_subseed_strength
