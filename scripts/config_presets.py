@@ -70,6 +70,11 @@ def load_txt2img_custom_tracked_component_ids() -> list[str]:
 #cd_txt2img_weights
 #cd_txt2img_end_at_this_step
 
+# Forge - ControlNet Integrated:
+#txt2img_controlnet_ControlNet-0_controlnet_control_step_slider
+#txt2img_controlnet_ControlNet-1_controlnet_control_step_slider
+#txt2img_controlnet_ControlNet-2_controlnet_control_step_slider
+
 # ControlNet (extension):
 #txt2img_controlnet_ControlNet-0_controlnet_enable_checkbox
 #txt2img_controlnet_ControlNet-0_controlnet_low_vram_checkbox
@@ -327,6 +332,11 @@ def load_img2img_custom_tracked_component_ids() -> list[str]:
 #cd_img2img_positions
 #cd_img2img_weights
 #cd_img2img_end_at_this_step
+
+# Forge - ControlNet Integrated:
+#img2img_controlnet_ControlNet-0_controlnet_control_step_slider
+#img2img_controlnet_ControlNet-1_controlnet_control_step_slider
+#img2img_controlnet_ControlNet-2_controlnet_control_step_slider
 
 # ControlNet (extension):
 #img2img_controlnet_ControlNet-0_controlnet_enable_checkbox
