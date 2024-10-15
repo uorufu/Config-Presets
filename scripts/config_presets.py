@@ -10,17 +10,37 @@ from json import JSONDecodeError
 from modules.ui_components import ToolButton
 from modules import shared
 
-BASEDIR = scripts.basedir()     #C:\path\to\Stable Diffusion\extensions\Config-Presets   needs to be set in global space to get the extra 'extensions\Config-Presets' path
+
+def log(text: str):
+    print(f"[Config Presets] {text}")
+
+def log_error(text: str):
+    print(f"[ERROR][Config Presets] {text}")
+
+def log_critical_error(text: str):
+    print(f"[ERROR][CRITICAL][Config Presets] {text}")
+
+
 CONFIG_TXT2IMG_CUSTOM_TRACKED_COMPONENTS_FILE_NAME = "config-txt2img-custom-tracked-components.txt"
 CONFIG_IMG2IMG_CUSTOM_TRACKED_COMPONENTS_FILE_NAME = "config-img2img-custom-tracked-components.txt"
 CONFIG_TXT2IMG_FILE_NAME = "config-txt2img.json"
 CONFIG_IMG2IMG_FILE_NAME = "config-img2img.json"
-configpresets_dir = shared.cmd_opts.configpresets_dir or BASEDIR #add --configpresets-dir "C:\Path\To\configpresets" to CMD flags to change config preset directory.
+BASEDIR = scripts.basedir()     #C:\path\to\Stable Diffusion\extensions\Config-Presets   needs to be set in global space to get the extra 'extensions\Config-Presets' path
+config_folder = BASEDIR
+
+if shared.cmd_opts.configpresets_dir:
+    if os.path.exists(shared.cmd_opts.configpresets_dir):
+        config_folder = shared.cmd_opts.configpresets_dir   # COMMANDLINE_ARGS: --configpresets-dir "C:/path/to/folder", setup in preload.py
+        log(f"Will load config files at: {config_folder}")
+    else:
+        log_error(f"The directory set with --configpresets-dir in COMMANDLINE_ARGS {shared.cmd_opts.configpresets_dir} does not exist, using default directly at {config_folder}")
+
+
 
 def load_txt2img_custom_tracked_component_ids() -> list[str]:
     txt2img_custom_tracked_components_ids = []
     try:
-        with open(f"{configpresets_dir}/{CONFIG_TXT2IMG_CUSTOM_TRACKED_COMPONENTS_FILE_NAME}", "r") as file:
+        with open(f"{config_folder}/{CONFIG_TXT2IMG_CUSTOM_TRACKED_COMPONENTS_FILE_NAME}", "r") as file:
             for line in file:
                 line = line.strip()
                 if not line.startswith("#") and line != "":  # ignore lines that start with # or are empty
@@ -260,7 +280,7 @@ def load_txt2img_custom_tracked_component_ids() -> list[str]:
 """
 
         write_text_to_file(txt2img_custom_tracked_components_default_text, CONFIG_TXT2IMG_CUSTOM_TRACKED_COMPONENTS_FILE_NAME)
-        print(f"[Config Presets] txt2img custom tracked components config file not found, created default config at {configpresets_dir}/{CONFIG_TXT2IMG_CUSTOM_TRACKED_COMPONENTS_FILE_NAME}")
+        print(f"[Config Presets] txt2img custom tracked components config file not found, created default config at {config_folder}/{CONFIG_TXT2IMG_CUSTOM_TRACKED_COMPONENTS_FILE_NAME}")
 
     return txt2img_custom_tracked_components_ids
 
@@ -269,7 +289,7 @@ def load_txt2img_custom_tracked_component_ids() -> list[str]:
 def load_img2img_custom_tracked_component_ids() -> list[str]:
     img2img_custom_tracked_components_ids = []
     try:
-        with open(f"{configpresets_dir}/{CONFIG_IMG2IMG_CUSTOM_TRACKED_COMPONENTS_FILE_NAME}", "r") as file:
+        with open(f"{config_folder}/{CONFIG_IMG2IMG_CUSTOM_TRACKED_COMPONENTS_FILE_NAME}", "r") as file:
             for line in file:
                 line = line.strip()
                 if not line.startswith("#") and line != "":  # ignore lines that start with # or are empty
@@ -564,14 +584,14 @@ def load_img2img_custom_tracked_component_ids() -> list[str]:
 """
 
         write_text_to_file(img2img_custom_tracked_components_ids, CONFIG_IMG2IMG_CUSTOM_TRACKED_COMPONENTS_FILE_NAME)
-        print(f"[Config Presets] img2img custom tracked components config file not found, created default config at {configpresets_dir}/{CONFIG_TXT2IMG_CUSTOM_TRACKED_COMPONENTS_FILE_NAME}")
+        print(f"[Config Presets] img2img custom tracked components config file not found, created default config at {config_folder}/{CONFIG_TXT2IMG_CUSTOM_TRACKED_COMPONENTS_FILE_NAME}")
 
     return img2img_custom_tracked_components_ids
 
 
 def load_txt2img_config_file():
     try:
-        with open(f"{configpresets_dir}/{CONFIG_TXT2IMG_FILE_NAME}") as file:
+        with open(f"{config_folder}/{CONFIG_TXT2IMG_FILE_NAME}") as file:
             txt2img_config_presets = json.load(file)
 
     except (FileNotFoundError, JSONDecodeError) as e:    #JSONDecodeError can happen and prevent the Web UI from loading if the json file is malformed
@@ -685,9 +705,9 @@ def load_txt2img_config_file():
 
         if e.__class__ == FileNotFoundError:
             write_json_to_file(txt2img_config_presets, CONFIG_TXT2IMG_FILE_NAME)
-            print(f"[Config Presets] txt2img config file not found. Created default txt2img config at {configpresets_dir}/{CONFIG_TXT2IMG_FILE_NAME}")
+            print(f"[Config Presets] txt2img config file not found. Created default txt2img config at {config_folder}/{CONFIG_TXT2IMG_FILE_NAME}")
         elif e.__class__ == JSONDecodeError:
-            log_error(f"failed to load txt2img config file at {configpresets_dir}/{CONFIG_TXT2IMG_FILE_NAME}")
+            log_error(f"failed to load txt2img config file at {config_folder}/{CONFIG_TXT2IMG_FILE_NAME}")
             log_error(f"at line {e.lineno}, col {e.colno}: {e.msg}")
             log_error(f"Loading the default presets until you fix the syntax error, or you could delete the file and let it be recreated with default values.")
             txt2img_config_presets = {"ERROR loading your config file! See the console for details": {}}
@@ -697,7 +717,7 @@ def load_txt2img_config_file():
 
 def load_img2img_config_file():
     try:
-        with open(f"{configpresets_dir}/{CONFIG_IMG2IMG_FILE_NAME}") as file:
+        with open(f"{config_folder}/{CONFIG_IMG2IMG_FILE_NAME}") as file:
             img2img_config_presets = json.load(file)
 
 
@@ -740,9 +760,9 @@ def load_img2img_config_file():
 
         if e.__class__ == FileNotFoundError:
             write_json_to_file(img2img_config_presets, CONFIG_IMG2IMG_FILE_NAME)
-            print(f"[Config Presets] img2img config file not found. Created default img2img config at {configpresets_dir}/{CONFIG_IMG2IMG_FILE_NAME}")
+            print(f"[Config Presets] img2img config file not found. Created default img2img config at {config_folder}/{CONFIG_IMG2IMG_FILE_NAME}")
         elif e.__class__ == JSONDecodeError:
-            log_error(f"failed to load img2img config file at {configpresets_dir}/{CONFIG_IMG2IMG_FILE_NAME}")
+            log_error(f"failed to load img2img config file at {config_folder}/{CONFIG_IMG2IMG_FILE_NAME}")
             log_error(f"at line {e.lineno}, col {e.colno}: {e.msg}")
             log_error(f"Loading the default presets until you fix the syntax error, or you could delete the file and let it be recreated with default values.")
             img2img_config_presets = {"ERROR loading your config file! See the console for details": {}}
@@ -1020,7 +1040,7 @@ class Script(scripts.Script):
             # this check needs to happen after optional_ids are accounted for
             for component_name, component in component_map.items():
                 if component is None:
-                    log_error(f"The {'txt2img' if self.is_txt2img else 'img2img'} component '{component_name}' could not be processed. This may be because you are running an outdated version of the Config-Presets extension, you included a component ID in the custom tracked components config file that does not exist, it no longer exists (if you updated an extension or Automatic1111), or is an invalid component (if this is the case, you need to manually edit the config file at {configpresets_dir}\\{custom_tracked_components_config_file_name} or just delete it so it resets to defaults). This extension will not work until this issue is resolved.")
+                    log_error(f"The {'txt2img' if self.is_txt2img else 'img2img'} component '{component_name}' could not be processed. This may be because you are running an outdated version of the Config-Presets extension, you included a component ID in the custom tracked components config file that does not exist, it no longer exists (if you updated an extension or Automatic1111), or is an invalid component (if this is the case, you need to manually edit the config file at {config_folder}\\{custom_tracked_components_config_file_name} or just delete it so it resets to defaults). This extension will not work until this issue is resolved.")
                     return
 
             # Mark components with type "index" to be transformed
@@ -1172,7 +1192,7 @@ class Script(scripts.Script):
                         visible=False,
                     )
                     open_config_file_button.click(
-                        fn=lambda: open_file(f"{configpresets_dir}/{config_file_name}"),
+                        fn=lambda: open_file(f"{config_folder}/{config_file_name}"),
                         inputs=[],
                         outputs=[],
                     )
@@ -1268,7 +1288,7 @@ class Script(scripts.Script):
                                     elem_id="script_config_preset_open_custom_tracked_components_config",
                                 )
                                 open_custom_tracked_components_config_file_button.click(
-                                    fn=lambda: open_file(f"{configpresets_dir}/{custom_tracked_components_config_file_name}"),
+                                    fn=lambda: open_file(f"{config_folder}/{custom_tracked_components_config_file_name}"),
                                     inputs=[],
                                     outputs=[],
                                 )
@@ -1346,30 +1366,19 @@ def save_config(config_presets, component_map, config_file_name):
 
 
 def write_json_to_file(json_data, file_name: str):
-    with open(f"{configpresets_dir}/{file_name}", "w") as file:
+    with open(f"{config_folder}/{file_name}", "w") as file:
         file.write(json.dumps(json_data, indent=4))
 
 
 def write_text_to_file(text, file_name: str):
-    with open(f"{configpresets_dir}/{file_name}", "w") as file:
+    with open(f"{config_folder}/{file_name}", "w") as file:
         file.write(text)
 
 
 def replace_text_in_file(old: str, new: str, file_name: str):
-    with open(f"{configpresets_dir}/{file_name}", "r") as file:
+    with open(f"{config_folder}/{file_name}", "r") as file:
         content = file.read()
 
-    with open(f"{configpresets_dir}/{file_name}", "w") as file:
+    with open(f"{config_folder}/{file_name}", "w") as file:
         file.write(content.replace(old, new))
 
-
-def log(text: str):
-    print(f"[Config Presets] {text}")
-
-
-def log_error(text: str):
-    print(f"[ERROR][Config Presets] {text}")
-
-
-def log_critical_error(text: str):
-    print(f"[ERROR][CRITICAL][Config Presets] {text}")
