@@ -15,7 +15,7 @@ CONFIG_TXT2IMG_CUSTOM_TRACKED_COMPONENTS_FILE_NAME = "config-txt2img-custom-trac
 CONFIG_IMG2IMG_CUSTOM_TRACKED_COMPONENTS_FILE_NAME = "config-img2img-custom-tracked-components.txt"
 CONFIG_TXT2IMG_FILE_NAME = "config-txt2img.json"
 CONFIG_IMG2IMG_FILE_NAME = "config-img2img.json"
-configpresets_dir = shared.cmd_opts.configpresets_dir or os.path.join(BASEDIR) #add --configpresets-dir "C:\Path\To\configpresets" to CMD flags to change config preset directory.
+configpresets_dir = shared.cmd_opts.configpresets_dir or BASEDIR #add --configpresets-dir "C:\Path\To\configpresets" to CMD flags to change config preset directory.
 
 def load_txt2img_custom_tracked_component_ids() -> list[str]:
     txt2img_custom_tracked_components_ids = []
